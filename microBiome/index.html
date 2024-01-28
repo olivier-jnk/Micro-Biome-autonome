@@ -10,8 +10,10 @@
     <div class="dot" id="dotUn"></div> -->
 
     <div class="environment" id="biome">
-    <button onclick="newCreature()">creer new</button>   
-    <button onclick="popC()">+</button>
+        <button onclick="newCreature()">creer new</button>   
+        <button onclick="popC()">+</button>
+        <h1>Micro-Biome.</h1>
+        <!-- animations du texte + informations supplémentaires. -->
 
     </div>
     <style>
@@ -40,6 +42,12 @@
         }
         .environment{
             height: 100vh;
+            overflow: hidden;
+        }
+        .environment h1{
+            position: absolute;
+            top: 50%;
+            left: 50%;
         }
 
         .dot#dotUn{
