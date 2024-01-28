@@ -1,25 +1,80 @@
-setInterval(() => {
-    const nombreAleatoire = Math.random() * 2 - 1;
-    const nombreAleatoire2 = Math.random() * 2 - 1;
-    getPosValues(nombreAleatoire, nombreAleatoire2);
+const biome = document.getElementById("biome");
+
+function Creature(espece, categorie, colorChoosen) {
+    this.espece = espece;
+    this.categorie = categorie;
+    this.vitesseDeplacement = calculateRandomValue(5, 15);
+    this.vie = calculateRandomValue(50, 100);
+    this.degats = calculateRandomValue(10, 20);
+    this.position = { x: 0, y: 0 };
+    this.id = espece + categorie + calculateRandomValue(4,10000)
+    //mieux générer l'id pour éviter les paires.
+    let creatureCreated = document.createElement("div")
+    creatureCreated.className = "dot";
+    creatureCreated.id = this.id;
+    biome.appendChild(creatureCreated)
+    let idC = document.getElementById(this.id)
+    idC.style.backgroundColor = colorChoosen;
+}
+
+function calculateRandomValue(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+Creature.prototype.deplacer = function() {
+    posXDep = calculateRandomValue(-1, 1)
+    posYDep = calculateRandomValue(-1, 1)
+
+    this.position.x += posXDep;
+    this.position.y += posYDep;
+    getPosValues(posXDep, posYDep, this.id)
+    console.log(this.espece + " se déplace vers " + this.position.x + ", " + this.position.y);
+};
+
+Creature.prototype.effectuerActions = function() {
+    this.deplacer();
+    // Possibilité d'ajouter d'autres actions comme la fuite si prédateur dans les parages, recherche de nourriture si faim, combat...
+};
+
+
+const creatures = [
+    new Creature("Creature1", "mobile","black"),
+    new Creature("Creature2", "mobile","red"),
+    new Creature("Creature3", "mobile","blue"),
+];
+
+function newCreature() {
+    let creature = prompt("Nom de la créature");
+    let spe = prompt("Mobile ou immobile");
+    let couleur = prompt("Couleur");
+    // faire une barre qui pop, au lieu du prompt qui stoppe tout.
     
-},100)
+    let newCreatureInstance = new Creature(creature, spe, couleur);
 
-setInterval(() => {
-    const nombreAleatoire = Math.random() * 2 - 1;
-    const nombreAleatoire2 = Math.random() * 2 - 1;
-    getPosValues1(nombreAleatoire, nombreAleatoire2);
-    
-},100)
+    creatures.push(newCreatureInstance);
+}
 
-function getPosValues (nombreAleatoire, nombreAleatoire2){
-    const directionPlus = nombreAleatoire ;
-    const directionPlus2 = nombreAleatoire2;
+function popC(){
+    let newClassicC = new Creature ("classique","classique","pink")
+    creatures.push(newClassicC)
+}
 
-    let dot = document.getElementById("dot")
+setInterval(function() {
+    for (i = 0; i < creatures.length; i++) { 
+        creatures[i].effectuerActions();
+    }
+}, 100);
+
+
+function getPosValues (posX, posY,id){
+    const posXV = posX;
+    const posYV = posY;
+    creatureId = id;
+
+    let dot = document.getElementById(id)
 
     const styles = window.getComputedStyle(dot);
-
+    
     const leftValueInPixels = parseFloat(styles.getPropertyValue('left'));
 
     const parentWidthInPixels = dot.parentElement.clientWidth;
@@ -31,50 +86,19 @@ function getPosValues (nombreAleatoire, nombreAleatoire2){
     const parentHeightInPixels = dot.parentElement.clientHeight;
 
     const topValueInPercentage = (topValueInPixels / parentHeightInPixels) * 100;
-    // console.log(leftValueInPercentage + topValueInPercentage);
-    initMoov(leftValueInPercentage,topValueInPercentage,directionPlus,directionPlus2);
+
+    initMoov(leftValueInPercentage,topValueInPercentage,posXV,posYV,dot);
 }
 
-function initMoov(leftVal,topVal,nombreAleatoire, nombreAleatoire2){
+function initMoov(leftVal,topVal,nombreAleatoire, nombreAleatoire2,dot){
     dot.style.left = leftVal + nombreAleatoire + "%";
     dot.style.top = topVal + nombreAleatoire2 + "%";
 }
 
 
-//
+// deplacement toujours trop saccadé, incorporer la logique de but dans le déplacement (aller vers une direction et pas deplacement completement 
+// aleatoire. )
 
+// apparition aléatoire ou dans un endroit particulier.
 
-function getPosValues1 (nombreAleatoire, nombreAleatoire2){
-    const directionPlus = nombreAleatoire ;
-    const directionPlus2 = nombreAleatoire2;
-
-    let dotUn = document.getElementById("dotUn")
-
-    const styles = window.getComputedStyle(dotUn);
-
-    const leftValueInPixels = parseFloat(styles.getPropertyValue('left'));
-
-    const parentWidthInPixels = dotUn.parentElement.clientWidth;
-
-    const leftValueInPercentage = (leftValueInPixels / parentWidthInPixels) * 100;
-
-    const topValueInPixels = parseFloat(styles.getPropertyValue('top'));
-
-    const parentHeightInPixels = dotUn.parentElement.clientHeight;
-
-    const topValueInPercentage = (topValueInPixels / parentHeightInPixels) * 100;
-    // console.log(leftValueInPercentage + topValueInPercentage);
-    initMoov1(leftValueInPercentage,topValueInPercentage,directionPlus,directionPlus2);
-}
-
-function initMoov1(leftVal,topVal,nombreAleatoire, nombreAleatoire2){
-    dotUn.style.left = leftVal + nombreAleatoire + "%";
-    dotUn.style.top = topVal + nombreAleatoire2 + "%";
-}
-
-// faire en sorte que la trajectoire ne dévie pas trop. Pas mode crise d'epilepsie. Il peut y'avoir quelques déviations, mais que ca paraisse au plus naturel.
-// Moments de mouvement pour mouvement, moments de mouvement pour but et mouvement d'immobilité voir innaction totale.
-// Changements d'etats et de comportements en fonction des zones.
-
-// faire en sorte que le code soit modulable pour ne pas répéter deux fois le meme code en changeant juste l'id du dot. Il faut que un code puisse,
-// S'occuper de la gestion de déplacement de plusieurs elements en meme temps.
+// terrain illimité peut etre tres intéressant.
