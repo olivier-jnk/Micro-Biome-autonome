@@ -1,16 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Micro-biome</title>
 </head>
 <body>
-    <div class="dot" id="dot"></div>
-    <div class="dot" id="dotUn"></div>
+    <!-- <div class="dot" id="dot"></div>
+    <div class="dot" id="dotUn"></div> -->
+
+    <div class="environment" id="biome">
+    <button onclick="newCreature()">creer new</button>   
+    <button onclick="popC()">+</button>
+
+    </div>
     <style>
         body{
-            height: 97vh;
+            height: 100vh;
         }
         .dot {
             height: 25px;
@@ -22,6 +28,20 @@
             left: 50%;
             top: 10%;
         }
+        .environment .dot{
+            height: 25px;
+            width: 25px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            left: 50%;
+            top: 50%;
+        }
+        .environment{
+            height: 100vh;
+        }
+
         .dot#dotUn{
             background-color: red;
         }
