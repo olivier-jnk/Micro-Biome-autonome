@@ -8,6 +8,7 @@ function Creature(espece, categorie, colorChoosen) {
     this.degats = calculateRandomValue(10, 20);
     this.position = { x: 0, y: 0 };
     this.id = espece + categorie + calculateRandomValue(4,10000)
+    this.feed = 100;
     //mieux générer l'id pour éviter les paires.
     let creatureCreated = document.createElement("div")
     creatureCreated.className = "dot";
@@ -28,14 +29,13 @@ Creature.prototype.deplacer = function() {
     this.position.x += posXDep;
     this.position.y += posYDep;
     getPosValues(posXDep, posYDep, this.id)
-    console.log(this.espece + " se déplace vers " + this.position.x + ", " + this.position.y);
 };
 
 Creature.prototype.effectuerActions = function() {
+    // this.feed-- Beaucoup moins régulièrement ou a plus petites doses.
     this.deplacer();
     // Possibilité d'ajouter d'autres actions comme la fuite si prédateur dans les parages, recherche de nourriture si faim, combat...
 };
-
 
 const creatures = [
     new Creature("Creature1", "mobile","black"),
@@ -94,7 +94,6 @@ function initMoov(leftVal,topVal,nombreAleatoire, nombreAleatoire2,dot){
     dot.style.left = leftVal + nombreAleatoire + "%";
     dot.style.top = topVal + nombreAleatoire2 + "%";
 }
-
 
 // deplacement toujours trop saccadé, incorporer la logique de but dans le déplacement (aller vers une direction et pas deplacement completement 
 // aleatoire. )
