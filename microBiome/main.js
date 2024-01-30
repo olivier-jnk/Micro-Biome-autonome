@@ -12,13 +12,13 @@ function Creature(specie, categorie, predateur, colorChoosen) {
     this.color = colorChoosen;
     this.categorie = categorie;
     this.predateur = predateur; // definition du predateur de la creature // plus tard en set plusieurs.
-    this.vitesseDeplacement = calculateRandomValue(5, 15);
-    this.vie = calculateRandomValue(50, 100);
+    this.vitesseDeplacement = calculateRandomValue(5, 15); // Innutilisé pour l'instant.
+    this.vie = calculateRandomValue(50,100); //calculateRandomValue(50, 100)
     this.degats = calculateRandomValue(10, 20);
     this.position = { x: calculateRandomValue(10,80), y: calculateRandomValue(10,80)};
     this.rayonPerimetre = 15; // perimetre plutot bon. // peut etre plus.
-    this.id = specie + categorie + calculateRandomValue(1,10000)
-    this.feed = 100;
+    this.id = specie + categorie + calculateRandomValue(1,10000);
+    this.feed = 100; // 100
     //mieux générer l'id pour éviter les paires.
     let creatureCreated = document.createElement("div")
     creatureCreated.className = "dot";
@@ -85,46 +85,43 @@ Creature.prototype.effectuerActions = function() {
         return false;
     });
 
-    if(this.vies < 0){
-        console.log("c'est la mort !")
-    }
-    else if(this.feed < 40){ 
-        if(this.feed < 0){
-            setInterval(() =>{
-                console.log("la faim vous ronge" + this.id)
-                this.vies--
-                console.log("La faim vous retire de la vie.")
-            }, 5000)
-        }else{
-            console.log("La faim commence à se faire sentir.")
-            this.deplacer();
-        // function rechercher nourriture.
+    // if(this.vies < 0){
+    //     console.log("c'est la mort !")
+    // }
+    // else if(this.feed < 40){ 
+    //     if(this.feed < 0){
+    //         setInterval(() =>{
+    //             console.log("la faim vous ronge" + this.id)
+    //             this.vies--
+    //             console.log("La faim vous retire de la vie.")
+    //         }, 5000)
+    //     }else{
+    //         console.log("La faim commence à se faire sentir.")
+    //         this.deplacer();
+    //     // function rechercher nourriture.
+    //     }
+    // }else{
+
+    if(creaturesAutour.length > 0){ //predateurAuxAlentours // Fonctionnalitée completement buggé ! QUOIQUE ?
+        console.log("creature aux alentours.")
+        // console.log("Creature aux alentours !" + " cible = " + this.id + "creature = " + this.creatureProche)
+        if(this.creatureProche === this.predateur){ // probleme ca reste ancré.
+            console.log(this.specie + " dit : Prédateur aux alentours. " + this.creatureProche)
         }
-    }else{
-        if(creaturesAutour.length > 0){ //predateurAuxAlentours // Fonctionnalitée completement buggé ! QUOIQUE ?
-            console.log("creature aux alentours.")
-            // console.log("Creature aux alentours !" + " cible = " + this.id + "creature = " + this.creatureProche)
-            if(this.creatureProche === this.predateur){ // probleme ca reste ancré.
-                console.log(this.specie + " dit : Prédateur aux alentours. " + this.creatureProche)
+        if(this.creatureProche === this.specie){
+            console.log(this.specie + " animal de la meme espece dans les alentours. " + this.creatureProche)
+            if(this.feed > 70){
+                // probleme de double accouplement (les deux font l'action)
+                // faire en sorte de recup la feed des 2 + de faire en sorte que ce soit celui le plus nourri qui effectue
+                // L'action.
+                // patcher le probleme de reproduction infinie. nouveau né se reproduit...
+                newCreature2(calculateRandomValue(1,1000), this.categorie, "joe", "orange" )
             }
-            if(this.creatureProche === this.specie){
-                console.log(this.specie + " animal de la meme espece dans les alentours. " + this.creatureProche)
-                if(this.feed > 70){
-                    // probleme de double accouplement (les deux font l'action)
-                    // faire en sorte de recup la feed des 2 + de faire en sorte que ce soit celui le plus nourri qui effectue
-                    // L'action.
-                    newCreature2(this.specie, this.categorie, this.predateur, this.color )
-                }
-            }
+        }
             this.deplacer(); // donner des instructions de deplacement spécifique en parametre OU function speciale de fuite.
-        }
-        else if(value > 0){ //PartenaireAuxAlentours && feed > 70 && PartenaireFeed > 70
-            // function parades amoureuses et accouplement.
-            // Inclure dans creatures aux alentours.
-        }else{  
-            // errance
-            this.deplacer();
-        }
+    }else{  
+        // errance
+        this.deplacer();
     }
 };
 
@@ -135,9 +132,9 @@ Creature.prototype.calculerDistance = function(point1, point2) {
 };
 
 const creatures = [
-    new Creature("poule", "mobile","renard","grey"),
-    new Creature("poule", "mobile","vipere","grey"), // renard orange
-    new Creature("poule", "mobile","poule","grey"), // vipere green
+    new Creature("joe", "mobile","renard","grey"),
+    new Creature("jean", "mobile","vipere","grey"), // renard orange
+    new Creature("jack", "mobile","poule","grey"), // vipere green
 ];
 
 function newCreature() {
@@ -158,7 +155,7 @@ function newCreature2(creature, spe, predateur, couleur) {
     let newCreatureInstance = new Creature(creature, spe, predateur, couleur);
 
     creatures.push(newCreatureInstance);
-} // regrouper les 2 plus tard !
+} // regrouper les 2 plus tard ! ou modifier clairement le nom.
 
 function popC(){
     let newClassicC = new Creature ("classique","classique", "poule","pink")
@@ -167,7 +164,49 @@ function popC(){
 
 setInterval(function() {
     for (i = 0; i < creatures.length; i++) { 
-        this.feed--
         creatures[i].effectuerActions();
     }
 }, 200);
+
+setInterval(() =>{
+    for(i = 0; i < creatures.length; i++){
+        if(creatures[i].vie <= 0){
+            let idDeadC = creatures[i].id;
+            delete creatures[i];
+
+            let HDeadC = document.getElementById(idDeadC);
+            HDeadC.remove();
+
+            // CKill(idDeadC);
+
+            // disparition totale un peu abrupte. faire fonctionner le systeme de setTimeout.
+            
+            
+            
+            // conflit j'ai l'impression quand suppression de deux creatures en mm temps. 
+
+            // setTimeout(() => {
+            //     let idDeadC1 = creatures[i].id
+            //     const deadC = document.getElementById(idDeadC1);
+            //     deadC.remove();
+            // },5000)
+            // fonctionne pas.
+
+        }else{
+            creatures[i].feed--
+            if (creatures[i].feed <= 0){
+                creatures[i].vie--
+            }
+        }
+        console.log("premiere itération.")
+    }
+    console.log("retrait de nourriture général.")
+}, 5000)
+
+// async function CKill (KillCId){
+    
+// }
+
+
+// faire une fonction speciale de kill creature. possible que à partir de l'id de la creature glissé en paramètre.
+// d'abord suppression de l'objet puis quelques secondes apres html.
