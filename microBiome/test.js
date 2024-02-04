@@ -37,7 +37,7 @@ function Creature(specie, categorie, predateur,proie,sexe, colorChoosen) {
 }
 
 function calculateRandomValue(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor(Math.random() * (max - min + 1)) + min; 
 }
 
 Creature.prototype.deplacer = function(predation,proieX,proieY,predateurX,predateurY) {
@@ -45,7 +45,7 @@ Creature.prototype.deplacer = function(predation,proieX,proieY,predateurX,predat
     // encore une organisation pas tres efficace du code surment.
     if(predation < 0){ // fonctionne ?
         if(predateurX < proieX){
-            console.log("predateur X < proie X")
+            // console.log("predateur X < proie X")
             posXDep = calculateRandomValue(1,2)
             if(predateurY < proieY){
                 posYDep = calculateRandomValue(1,4);
@@ -55,7 +55,7 @@ Creature.prototype.deplacer = function(predation,proieX,proieY,predateurX,predat
             }
         }
         else{
-            console.log("predateur X > proieX")
+            // console.log("predateur X > proieX")
             posXDep = calculateRandomValue(-4, -1)
             if(predateurY < proieY){
                 posYDep = calculateRandomValue(1,4);
@@ -68,7 +68,7 @@ Creature.prototype.deplacer = function(predation,proieX,proieY,predateurX,predat
     else if(predation > 0){ // sup à 0 donc le processus de predation concerne le predateur (poursuite.)
         // Faire en sorte que parfois pour certaines raisons. le predateur ne poursuive pas forcement la proie.
         if(predateurX < proieX){
-            console.log("predateur X < proie X")
+            // console.log("predateur X < proie X")
             posXDep = calculateRandomValue(1,2)
             if(predateurY < proieY){
                 posYDep = calculateRandomValue(1,2);
@@ -78,7 +78,7 @@ Creature.prototype.deplacer = function(predation,proieX,proieY,predateurX,predat
             }
         }
         else{
-            console.log("predateur X > proieX")
+            // console.log("predateur X > proieX")
             posXDep = calculateRandomValue(-2, -1)
             if(predateurY < proieY){
                 posYDep = calculateRandomValue(1,2);
@@ -138,7 +138,7 @@ Creature.prototype.effectuerActions = function() {
 
             if(dist === true){
                 if(creature.specie === this.predateur){
-                    console.log(this.specie + " dit : Prédateur aux alentours. " + creature.specie)
+                    // console.log(this.specie + " dit : Prédateur aux alentours. " + creature.specie)
                     predation = -1; // -1 indique que le processus de predation concerne la proie.
                     let proieX = this.position.x;
                     let proieY = this.position.y;
@@ -154,13 +154,13 @@ Creature.prototype.effectuerActions = function() {
                 }
                 else if(creature.specie === this.proie){
                     if(hit === true){
-                        console.log("hit")
+                        // console.log("hit")
                         let degats = calculateRandomValue(1,5)
                         creature.vie -= degats;
                         // fonctionne à prioris mais toujours bug de disparition quand deces.
                         // peut etre diminuer le nombre de degats/ secondes.
                     }else{
-                        console.log("pas hit")
+                        // console.log("pas hit")
                     }
                     // Predateur repere sa proie.
                     predation = 1; // 1 indique que le processus de predation concerne la predateur.
@@ -172,9 +172,9 @@ Creature.prototype.effectuerActions = function() {
 
                 }
                 else if(creature.specie === this.specie){
-                    console.log(this.specie + " animal de la meme espece dans les alentours. " + creature.specie)
+                    // console.log(this.specie + " animal de la meme espece dans les alentours. " + creature.specie)
                     if(this.feed > 70 && creature.feed > 70 && this.sexe != creature.sexe && this.mating < 1 && creature.mating < 1){
-                        console.log("accouplement possible")
+                        // console.log("accouplement possible")
 
                         // que faire si les deux feed sont au meme niveau ?
                         // peut etre trouver un autre moyen. critere male/ femelle par exemple. ou indice superieur ou inferieur.
@@ -225,16 +225,16 @@ const creatures = [
     new Creature("poule","mobile","renard","undefined","male","grey"),
     new Creature("renard","mobile","vipere","poule","male","orange"),
     new Creature("vipere","mobile","poule","renard","male","green"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
+    new Creature("renard","mobile","vipere","poule","male","orange"),
+    new Creature("renard","mobile","vipere","poule","male","orange"),
+    new Creature("renard","mobile","vipere","poule","male","orange"),
+    new Creature("renard","mobile","vipere","poule","male","orange"),
+    new Creature("renard","mobile","vipere","poule","femelle","orange"),
+    new Creature("renard","mobile","vipere","poule","femelle","orange"),
+    new Creature("renard","mobile","vipere","poule","male","orange"),
+    new Creature("renard","mobile","vipere","poule","male","orange"),
+    new Creature("renard","mobile","vipere","poule","male","orange"),
+    new Creature("renard","mobile","vipere","poule","male","orange"),
 
     // new Creature("vipere","mobile","poule","male","green"),
 ];
@@ -265,20 +265,21 @@ function popC(){
 }
 
 setInterval(function() {
-    for (i = 0; i < creatures.length; i++) { 
-        creatures[i].effectuerActions();
+    for (const creature of creatures) { 
+        creature.effectuerActions();
     }
 }, 200);
 
 setInterval(() =>{
-    for(i = 0; i < creatures.length; i++){ // moyen peut etre de faire un for creature in creatures
-        if(creatures[i].vie <= 0){
+    for(const creature of creatures){ // moyen peut etre de faire un for creature in creatures
+        if(creature.vie <= 0){
             // SI suppression d'un element dans le tableau qui n'est pas le dernier dans la liste ca casse TOUTES les boucles for.
-            let idDeadC = creatures[i].id;
-            delete creatures[i];
+            let idDeadC = creature.id;
+            delete creature;
 
-            let HDeadC = document.getElementById(idDeadC);
-            HDeadC.remove();
+            // let HDeadC = document.getElementById(idDeadC);
+            // HDeadC.remove();
+            // console.log("UN DECES / DEPOP")
 
             // CKill(idDeadC);
 
@@ -294,19 +295,19 @@ setInterval(() =>{
             // fonctionne pas.
 
         }else{
-            creatures[i].feed--
-            if (creatures[i].feed <= 0){
-                creatures[i].vie--
+            creature.feed--
+            if (creature.feed <= 0){
+                creature.vie--
             }
         }
-        console.log("premiere itération.")
+        // console.log("premiere itération.")
     }
-    console.log("retrait de nourriture général.")
+    // console.log("retrait de nourriture général.")
 }, 5000)
 
 setInterval(() => {
-    for(i = 0; i < creatures.length; i++){
-        creatures[i].mating = 0;
+    for(const creature of creatures){
+        creature.mating = 0;
         // Pas la meilleure maniere car timer peu tomber juste apres un accouplement.
         // trouver un moyen plus personnalisé à chaque creature.
     }

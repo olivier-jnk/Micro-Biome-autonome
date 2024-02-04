@@ -2,9 +2,10 @@ const biome = document.getElementById("biome");
 let valeur1 = 1;
 let valeur2 = 2;
 const value = 0;
-let predateur = 0;
-let proie = 1;
-let predation = 0;
+// let predateur = 0;
+// let proie = 1;
+// let predation = 0;
+let relation = 0;
 
 setInterval(()=> {
     valeur1 = calculateRandomValue(-1,1)
@@ -20,7 +21,7 @@ function Creature(specie, categorie, predateur,proie,sexe, colorChoosen) {
     this.vie = calculateRandomValue(50,100); //calculateRandomValue(50, 100)
     this.color = colorChoosen;
     this.degats = calculateRandomValue(10, 20);
-    this.position = { x: calculateRandomValue(10,80), y: calculateRandomValue(10,80)}; // 10, 80 normalement.
+    this.position = { x: calculateRandomValue(10,20), y: calculateRandomValue(10,20)}; // 10, 80 normalement.
     this.rayonPerimetre = 15; // perimetre plutot bon. // peut etre plus.
     this.id = specie + categorie + calculateRandomValue(1,10000);
     this.sexe = sexe;
@@ -40,14 +41,14 @@ function calculateRandomValue(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-Creature.prototype.deplacer = function(predation,proieX,proieY,predateurX,predateurY) {
+Creature.prototype.deplacer = function(relation,c1X,c1Y,cProcheX,cProcheY) {
     let id = this.id;
     // encore une organisation pas tres efficace du code surment.
-    if(predation < 0){ // fonctionne ?
-        if(predateurX < proieX){
-            console.log("predateur X < proie X")
+    if(relation === -1){ // relation = proie qui repere un predateur.
+        if(cProcheX < c1X){
+            // console.log("predateur X < proie X")
             posXDep = calculateRandomValue(1,2)
-            if(predateurY < proieY){
+            if(cProcheY < c1Y){
                 posYDep = calculateRandomValue(1,4);
             }
             else{
@@ -55,9 +56,9 @@ Creature.prototype.deplacer = function(predation,proieX,proieY,predateurX,predat
             }
         }
         else{
-            console.log("predateur X > proieX")
+            // console.log("predateur X > proieX")
             posXDep = calculateRandomValue(-4, -1)
-            if(predateurY < proieY){
+            if(cProcheY < c1Y){
                 posYDep = calculateRandomValue(1,4);
             }
             else{
@@ -65,12 +66,12 @@ Creature.prototype.deplacer = function(predation,proieX,proieY,predateurX,predat
             }
         }
     }
-    else if(predation > 0){ // sup à 0 donc le processus de predation concerne le predateur (poursuite.)
+    else if(relation === 1){ // sup à 0 donc le processus de predation concerne le predateur (poursuite.)
         // Faire en sorte que parfois pour certaines raisons. le predateur ne poursuive pas forcement la proie.
-        if(predateurX < proieX){
-            console.log("predateur X < proie X")
+        if(cProcheX < c1X){
+            // console.log("predateur X < proie X")
             posXDep = calculateRandomValue(1,2)
-            if(predateurY < proieY){
+            if(cProcheY < c1Y){
                 posYDep = calculateRandomValue(1,2);
             }
             else{
@@ -78,13 +79,35 @@ Creature.prototype.deplacer = function(predation,proieX,proieY,predateurX,predat
             }
         }
         else{
-            console.log("predateur X > proieX")
+            // console.log("predateur X > proieX")
             posXDep = calculateRandomValue(-2, -1)
-            if(predateurY < proieY){
+            if(cProcheY < c1Y){
                 posYDep = calculateRandomValue(1,2);
             }
             else{
                 posYDep = calculateRandomValue(-2,-1);
+            }
+        }
+    }
+    else if(relation === 2){
+        if(cProcheX < c1X){
+            // console.log("predateur X < proie X")
+            posXDep = calculateRandomValue(-2,-1)
+            if(cProcheY < c1Y){
+                posYDep = calculateRandomValue(-2,-1);
+            }
+            else{
+                posYDep = calculateRandomValue(1,2);
+            }
+        }
+        else{
+            // console.log("predateur X > proieX")
+            posXDep = calculateRandomValue(1, 2)
+            if(cProcheY < c1Y){
+                posYDep = calculateRandomValue(-2,-1);
+            }
+            else{
+                posYDep = calculateRandomValue(1,2);
             }
         }
     }
@@ -139,7 +162,7 @@ Creature.prototype.effectuerActions = function() {
             if(dist === true){
                 if(creature.specie === this.predateur){
                     console.log(this.specie + " dit : Prédateur aux alentours. " + creature.specie)
-                    predation = -1; // -1 indique que le processus de predation concerne la proie.
+                    relation = -1; // -1 indique que le processus de predation concerne la proie.
                     let proieX = this.position.x;
                     let proieY = this.position.y;
                     let predateurX = creature.position.x;
@@ -154,16 +177,16 @@ Creature.prototype.effectuerActions = function() {
                 }
                 else if(creature.specie === this.proie){
                     if(hit === true){
-                        console.log("hit")
+                        // console.log("hit")
                         let degats = calculateRandomValue(1,5)
                         creature.vie -= degats;
                         // fonctionne à prioris mais toujours bug de disparition quand deces.
                         // peut etre diminuer le nombre de degats/ secondes.
                     }else{
-                        console.log("pas hit")
+                        // console.log("pas hit")
                     }
                     // Predateur repere sa proie.
-                    predation = 1; // 1 indique que le processus de predation concerne la predateur.
+                    relation = 1; // 1 indique que le processus de predation concerne la predateur.
                     let predateurX = this.position.x;
                     let predateurY = this.position.y;
                     let proieX = creature.position.x;
@@ -172,30 +195,36 @@ Creature.prototype.effectuerActions = function() {
 
                 }
                 else if(creature.specie === this.specie){
-                    console.log(this.specie + " animal de la meme espece dans les alentours. " + creature.specie)
+                    // console.log(this.specie + " animal de la meme espece dans les alentours. " + creature.specie)
                     if(this.feed > 70 && creature.feed > 70 && this.sexe != creature.sexe && this.mating < 1 && creature.mating < 1){
-                        console.log("accouplement possible")
-
-                        // que faire si les deux feed sont au meme niveau ?
-                        // peut etre trouver un autre moyen. critere male/ femelle par exemple. ou indice superieur ou inferieur.
-                        // accouplement possible.
-                        if(this.feed < creature.feed){
-                            // rien faire (l'autre espece s'occupe d'effectuer l'action.)
-                        }
-                        else if(this.feed > creature.feed){
-                            // La dans ce cas, c'est la creature qui initie l'accouplement. 
-                            // methode pour eviter les double accouplements.
-                            newCreature2(calculateRandomValue(1,1000), this.categorie, "pouleJunior","male","#2F653E" )
-                            // faire plus tard en sorte que l'enfant pop, à côté des parents + qu'il ait
-                            // des spécificités à lui
-                            // + faire en sorte que plusieurs enfants puissent apparaitrent
-                            // et que les enfants ne puissent pas s'accoupler entre eux.
-                            // mettre un cooldown de reproduction apres ca.
-                            // faire en sorte que ne soit pas possible un double accouplement.
-                            // faire un systeme de grossesse ? 
-                        }
-                        this.mating = 1; // empeche les accouplements infinies.
-                        
+                        relation === 2;
+                        let c1X = this.position.x;
+                        let c1Y = this.position.y;
+                        let cProcheX = creature.position.x;
+                        let cProcheY = creature.position.y;
+                        this.deplacer(relation, c1X, c1Y,cProcheX,cProcheY)
+                        // console.log("accouplement possible")
+                        if(hit === true){
+                            // que faire si les deux feed sont au meme niveau ?
+                            // peut etre trouver un autre moyen. critere male/ femelle par exemple. ou indice superieur ou inferieur.
+                            // accouplement possible.
+                            if(this.feed < creature.feed){
+                                // rien faire (l'autre espece s'occupe d'effectuer l'action.)
+                            }
+                            else if(this.feed > creature.feed){
+                                // La dans ce cas, c'est la creature qui initie l'accouplement. 
+                                // methode pour eviter les double accouplements.
+                                newCreature2(this.specie, this.categorie,this.predateur, this.proie, this.sexe,this.color)
+                                // faire plus tard en sorte que l'enfant pop, à côté des parents + qu'il ait
+                                // des spécificités à lui
+                                // + faire en sorte que plusieurs enfants puissent apparaitrent
+                                // et que les enfants ne puissent pas s'accoupler entre eux.
+                                // mettre un cooldown de reproduction apres ca.
+                                // faire en sorte que ne soit pas possible un double accouplement.
+                                // faire un systeme de grossesse ? 
+                            }
+                            this.mating = 1; // empeche les accouplements infinies.
+                        }             
                     }
                 }
                 this.deplacer();
@@ -218,25 +247,11 @@ Creature.prototype.calculerDistance = function(point1, point2) {
 };
 
 const creatures = [
-    // new Creature("poule","mobile","renard","male","grey"),
-    // new Creature("poule","mobile","renard","male","grey"),
-    // new Creature("poule","mobile","renard","male","grey"),
-    // new Creature("poule","mobile","renard","femelle","grey"),
     new Creature("poule","mobile","renard","undefined","male","grey"),
-    new Creature("renard","mobile","vipere","poule","male","orange"),
-    new Creature("vipere","mobile","poule","renard","male","green"),
     // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-    // new Creature("renard","mobile","vipere","poule","male","orange"),
-
-    // new Creature("vipere","mobile","poule","male","green"),
+    // new Creature("vipere","mobile","poule","renard","male","green"),
+    new Creature("poule","mobile","renard","undefined","femelle","grey"),
+    
 ];
 
 function newCreature() {
@@ -244,6 +259,8 @@ function newCreature() {
     let spe = prompt("Mobile ou immobile");
     let predateur = prompt("predateur")
     let couleur = prompt("Couleur");
+    // a ajouter.
+    // Ajouter un bouton + poule, + renard ...
     
     let newCreatureInstance = new Creature(creature, spe, predateur, couleur);
 
@@ -265,17 +282,18 @@ function popC(){
 }
 
 setInterval(function() {
-    for (i = 0; i < creatures.length; i++) { 
-        creatures[i].effectuerActions();
+    for (const creature of creatures) { 
+        creature.effectuerActions();
     }
 }, 200);
 
 setInterval(() =>{
-    for(i = 0; i < creatures.length; i++){ // moyen peut etre de faire un for creature in creatures
-        if(creatures[i].vie <= 0){
+    //i = 0; i < creatures.length; i++
+    for(const creature of creatures){ // moyen peut etre de faire un for creature in creatures
+        if(creature.vie <= 0){
             // SI suppression d'un element dans le tableau qui n'est pas le dernier dans la liste ca casse TOUTES les boucles for.
-            let idDeadC = creatures[i].id;
-            delete creatures[i];
+            let idDeadC = creature.id;
+            delete creature;
 
             let HDeadC = document.getElementById(idDeadC);
             HDeadC.remove();
@@ -294,14 +312,14 @@ setInterval(() =>{
             // fonctionne pas.
 
         }else{
-            creatures[i].feed--
-            if (creatures[i].feed <= 0){
-                creatures[i].vie--
+            creature.feed--
+            if (creature.feed <= 0){
+                creature.vie--
             }
         }
-        console.log("premiere itération.")
+        // console.log("premiere itération.")
     }
-    console.log("retrait de nourriture général.")
+    // console.log("retrait de nourriture général.")
 }, 5000)
 
 setInterval(() => {
