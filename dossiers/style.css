@@ -1,0 +1,35 @@
+body{
+    height: 100vh;
+}
+.dot {
+    height: 25px;
+    width: 25px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    left: 50%;
+    top: 10%;
+}
+.environment .dot{
+    height: 25px;
+    width: 25px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    left: 50%;
+    top: 50%;
+}
+.environment{
+    height: 100vh;
+    overflow: hidden;
+}
+.environment h1{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+.dot#dotUn{
+    background-color: red;
+}
